@@ -5,12 +5,6 @@
  * 中的client: 't'改为client: 'gtx'
  */
 const translateApi = require('google-translate-api');
-export function translate(text: string, targetLanguage: string = 'en') {
-    translateApi(text, {to: targetLanguage}).then((res: any) => {
-        text = res.text;
-        console.log(text);
-    }).catch((err: any) => {
-        text = '';
-        console.log(text)
-    });
+export function translateByApi(text: string, targetLanguage: string = 'en') {
+    return translateApi(text, {to: targetLanguage});
 }
