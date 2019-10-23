@@ -3,7 +3,7 @@ import {sync as glob} from 'glob';
 import * as path from 'path';
 import * as fs from 'fs';
 import {translateByApi} from './google.translate';
-import {getZhFromTs} from './ast-util';
+import {getZhFromTs, translateTs} from './ast-util';
 import {StringList} from './type';
 import * as child_process from 'child_process';
 
@@ -34,5 +34,23 @@ translatePromise = Array.from(zhStrings).map(zhString => translateByApi(zhString
 Promise.all(translatePromise).then((value) => {
     console.log(value.map(temp => temp.text))
     console.log(zhStrings)
+    transformerTs(sourceDir)
     }
 );
+
+function transformerTs(codeDir: string) {
+    console.log(`==> start get transformerTs`);
+    glob('**/*.ts', {cwd: codeDir}).forEach(fileName => {
+    const filePath = path.join(codeDir, fileName);
+    let code = fs.readFileSync(filePath).toString();
+    ts.transpileModule(code, {
+    compilerOptions: {module: ts.ModuleKind.ESNext},
+    transformers: {before: [translateTs()]}
+           });
+           console.log(code)
+    
+       }
+    );
+}
+
+transformerTs(sourceDir);
